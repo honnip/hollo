@@ -1,6 +1,7 @@
 import { getLogger } from "@logtape/logtape";
 import type { Logger } from "drizzle-orm/logger";
 import { drizzle } from "drizzle-orm/postgres-js";
+import pgConnectionString, { parse } from "pg-connection-string";
 import createPostgres from "postgres";
 import * as schema from "./schema";
 
@@ -56,7 +57,15 @@ class LogTapeLogger implements Logger {
   }
 }
 
-export const postgres = createPostgres(databaseUrl, { connect_timeout: 5 });
+const connectionOptions = pgConnectionString.parse(databaseUrl);
+export const postgres = createPostgres({
+  host: connectionOptions.host ?? "localhost",
+  port: connectionOptions.port ? parseInt(connectionOptions.port) : undefined,
+  user: connectionOptions.user,
+  password: connectionOptions.password,
+  database: connectionOptions.database ?? undefined,
+  connect_timeout: 5,
+});
 export const db = drizzle(postgres, { schema, logger: new LogTapeLogger() });
 
 export default db;
