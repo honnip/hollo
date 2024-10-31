@@ -58,8 +58,9 @@ class LogTapeLogger implements Logger {
 }
 
 const connectionOptions = pgConnectionString.parse(databaseUrl);
+console.log(connectionOptions)
 export const postgres = createPostgres({
-  host: connectionOptions.host ?? "localhost",
+  host: connectionOptions.host ?? undefined,
   port: connectionOptions.port ? parseInt(connectionOptions.port) : undefined,
   user: connectionOptions.user,
   password: connectionOptions.password,
